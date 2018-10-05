@@ -1,19 +1,21 @@
 package com.sigma.exception;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(HttpStatus.NOT_FOUND)
-public class NotFoundException extends RuntimeException {
+public class NotFoundException extends DefaultException {
 
 	private static final long serialVersionUID = 1L;
-	
-	public NotFoundException(String message) {
-		super(message);
-	}
-	
+
 	public NotFoundException(String message, Throwable e) {
-		super(message, e);
+		super(HttpStatus.NOT_FOUND, message, e);
 	}
 
+	public NotFoundException(String message) {
+		super(HttpStatus.NOT_FOUND, message);
+	}
+
+	public NotFoundException(Throwable e) {
+		super(HttpStatus.NOT_FOUND, e);
+	}
+	
 }

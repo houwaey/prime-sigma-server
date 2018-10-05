@@ -38,7 +38,7 @@ public class WebUserController {
 	private PasswordEncoder passwordEncoder;
 	
 	@PostMapping("/login")
-	public ResponseEntity<Object> login(@RequestBody LoginRequest req) {
+	public ResponseEntity<?> login(@RequestBody LoginRequest req) {
 		WebUser user = webUserService.findOneByKeyVal("username", req.getUsername());
 		if (user == null) {
 			throw new NotFoundException("User does not exist");
@@ -46,11 +46,11 @@ public class WebUserController {
 		if (!passwordEncoder.matches(req.getPassword(), user.getPassword())) {
 			throw new UnauthorizedException("Invalid password");
 		}
-		return new ResponseEntity<Object>(new ApiResponse<Void>(HttpStatus.OK.value(), "Successfully logged in"), HttpStatus.OK);
+		return new ResponseEntity<Object>(new ApiResponse<Void>().success(), HttpStatus.OK);
 	}
 	
 	@PostMapping("/user")
-	public ResponseEntity<Object> createWebUser(@RequestBody WebUserRegistrationRequest req) {
+	public ResponseEntity<?> createWebUser(@RequestBody WebUserRegistrationRequest req) {
 		WebUser user = webUserService.findOneByKeyVal("username", req.getUsername());
 		if (user != null) {
 			throw new AlreadyExistException("Web User is already existing");
@@ -68,25 +68,25 @@ public class WebUserController {
 			throw new BadRequestException("Unable to create web user");
 		}
 		
-		return new ResponseEntity<Object>(new ApiResponse<Void>(HttpStatus.OK), HttpStatus.OK);
+		return new ResponseEntity<Object>(new ApiResponse<Void>().success(), HttpStatus.OK);
 	}
 	
 	@GetMapping("/user/{id}")
-	public ResponseEntity<Object> findUserById(@PathVariable("id") long id) {
+	public ResponseEntity<?> findUserById(@PathVariable("id") long id) {
 		WebUser user = webUserService.findOneById(id);
 		if (user == null) {
 			throw new NotFoundException("User does not exists");
 		}
-		return new ResponseEntity<Object>(new ApiResponse<WebUser>(user, HttpStatus.FOUND), HttpStatus.FOUND);
+		return new ResponseEntity<Object>(new ApiResponse<WebUser>().success(user), HttpStatus.OK);
 	}
 	
 	@GetMapping("/users")
-	public ResponseEntity<Object> findAllUsers() {
+	public ResponseEntity<?> findAllUsers() {
 		List<WebUser> users = webUserService.findAll();
 		if (users.size() <= 0) {
 			throw new NoContentException("No users found");
 		}
-		return new ResponseEntity<Object>(new ApiResponse<List<WebUser>>(users, HttpStatus.OK), HttpStatus.OK);
+		return new ResponseEntity<Object>(new ApiResponse<List<WebUser>>().success(users), HttpStatus.OK);
 	}
 
 }

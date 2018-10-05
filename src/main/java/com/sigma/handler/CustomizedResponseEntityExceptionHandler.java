@@ -2,7 +2,6 @@ package com.sigma.handler;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,6 +11,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import com.sigma.dto.ExceptionObject;
 import com.sigma.exception.AlreadyExistException;
 import com.sigma.exception.BadRequestException;
+import com.sigma.exception.DefaultException;
 import com.sigma.exception.ForbiddenException;
 import com.sigma.exception.InternalServerException;
 import com.sigma.exception.NoContentException;
@@ -23,101 +23,44 @@ import com.sigma.exception.UnauthorizedException;
 public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler({ Error.class })
-    public final ResponseEntity<Object> handleAllError(Error err, WebRequest request) {
+    public final ResponseEntity<?> handleAllError(Error e, WebRequest r) {
         return new ResponseEntity<Object>(
 						new ExceptionObject(HttpStatus.INTERNAL_SERVER_ERROR
-										, err.getMessage()
-										, err.getCause() != null ? err.getCause().getMessage() : "N/A"
-										, request.getDescription(true))
-						, HttpStatus.INTERNAL_SERVER_ERROR
+										, e.getMessage()
+										, e.getCause() != null ? e.getCause().getMessage() : "N/A"
+										, r.getDescription(true))
+						, HttpStatus.OK
 					);
     }
 	
 	@ExceptionHandler({ Exception.class })
-    public final ResponseEntity<Object> handleAllException(Exception ex, WebRequest request) {
+    public final ResponseEntity<?> handleAllException(Exception e, WebRequest r) {
         return new ResponseEntity<Object>(
 						new ExceptionObject(HttpStatus.INTERNAL_SERVER_ERROR
-										, ex.getMessage()
-										, ex.getCause() != null ? ex.getCause().getMessage() : "N/A"
-										, request.getDescription(true))
-						, HttpStatus.INTERNAL_SERVER_ERROR
+										, e.getMessage()
+										, e.getCause() != null ? e.getCause().getMessage() : "N/A"
+										, r.getDescription(true))
+						, HttpStatus.OK
 					);
     }
 	
-	@ExceptionHandler({ UnauthorizedException.class })
-	public final ResponseEntity<Object> handleUnauthorizedException(Exception ex, WebRequest request) {
+	@ExceptionHandler({
+		DefaultException.class, 
+		AlreadyExistException.class,
+		BadRequestException.class,
+		ForbiddenException.class,
+		InternalServerException.class,
+		NoContentException.class,
+		NotFoundException.class,
+		UnauthorizedException.class
+	})
+	public final ResponseEntity<?> handleDefaultException(DefaultException e, WebRequest r) {
 		return new ResponseEntity<Object>(
-						new ExceptionObject(HttpStatus.UNAUTHORIZED
-										, ex.getMessage()
-										, ex.getCause() != null ? ex.getCause().getMessage() : "N/A"
-										, request.getDescription(true))
-						, HttpStatus.UNAUTHORIZED
-					);
-	}
-	
-	@ExceptionHandler({ ForbiddenException.class })
-	public final ResponseEntity<Object> handleForbiddenException(Exception ex, WebRequest request) {
-		return new ResponseEntity<Object>(
-						new ExceptionObject(HttpStatus.FORBIDDEN
-										, ex.getMessage()
-										, ex.getCause() != null ? ex.getCause().getMessage() : "N/A"
-										, request.getDescription(true))
-						, HttpStatus.FORBIDDEN
-					);
-	}
-	
-	@ExceptionHandler({ InternalServerException.class })
-	public final ResponseEntity<Object> handleInternalServerException(Exception ex, WebRequest request) {
-		return new ResponseEntity<Object>(
-						new ExceptionObject(HttpStatus.INTERNAL_SERVER_ERROR
-										, ex.getMessage()
-										, ex.getCause() != null ? ex.getCause().getMessage() : "N/A"
-										, request.getDescription(true))
-						, HttpStatus.INTERNAL_SERVER_ERROR
-					);
-	}
-	
-	@ExceptionHandler({ UsernameNotFoundException.class, NotFoundException.class })
-	public final ResponseEntity<Object> handleNotFoundException(Exception ex, WebRequest request) {
-		return new ResponseEntity<Object>(
-						new ExceptionObject(HttpStatus.NOT_FOUND
-										, ex.getMessage()
-										, ex.getCause() != null ? ex.getCause().getMessage() : "N/A"
-										, request.getDescription(true))
-						, HttpStatus.NOT_FOUND
-					);
-	}
-	
-	@ExceptionHandler({ AlreadyExistException.class })
-	public final ResponseEntity<Object> handleAlreadyExistException(Exception e, WebRequest r) {
-		return new ResponseEntity<Object>(
-						new ExceptionObject(HttpStatus.PRECONDITION_FAILED
+						new ExceptionObject(e.getHttpStatus()
 										, e.getMessage()
 										, e.getCause() != null ? e.getCause().getMessage() : "N/A"
 										, r.getDescription(true))
-						, HttpStatus.PRECONDITION_FAILED
-					);
-	}
-	
-	@ExceptionHandler({ BadRequestException.class })
-	public final ResponseEntity<Object> handleBadRequestException(Exception e, WebRequest r) {
-		return new ResponseEntity<Object>(
-						new ExceptionObject(HttpStatus.BAD_REQUEST
-										, e.getMessage()
-										, e.getCause() != null ? e.getCause().getMessage() : "N/A"
-										, r.getDescription(true))
-						, HttpStatus.BAD_REQUEST
-					);
-	}
-	
-	@ExceptionHandler({ NoContentException.class })
-	public final ResponseEntity<Object> handleNoContentException(Exception e, WebRequest r) {
-		return new ResponseEntity<Object>(
-						new ExceptionObject(HttpStatus.NO_CONTENT
-										, e.getMessage()
-										, e.getCause() != null ? e.getCause().getMessage() : "N/A"
-										, r.getDescription(true))
-						, HttpStatus.NO_CONTENT
+						, HttpStatus.OK
 					);
 	}
 	

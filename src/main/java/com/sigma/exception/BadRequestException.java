@@ -1,19 +1,21 @@
 package com.sigma.exception;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(HttpStatus.BAD_REQUEST)
-public class BadRequestException extends RuntimeException {
+public class BadRequestException extends DefaultException {
 
 	private static final long serialVersionUID = 1L;
-	
-	public BadRequestException(String message) {
-		super(message);
-	}
-	
+
 	public BadRequestException(String message, Throwable e) {
-		super(message, e);
+		super(HttpStatus.BAD_REQUEST, message, e);
 	}
 
+	public BadRequestException(String message) {
+		super(HttpStatus.BAD_REQUEST, message);
+	}
+
+	public BadRequestException(Throwable e) {
+		super(HttpStatus.BAD_REQUEST, e);
+	}
+	
 }

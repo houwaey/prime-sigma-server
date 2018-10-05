@@ -1,22 +1,21 @@
 package com.sigma.exception;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(HttpStatus.FORBIDDEN)
-public class ForbiddenException extends RuntimeException {
+public class ForbiddenException extends DefaultException {
 
 	private static final long serialVersionUID = 1L;
 
-	public ForbiddenException() {
-		super("Forbidden exception");
-	}
-	
-	public ForbiddenException(String message) {
-		super(message);
-	}
-	
 	public ForbiddenException(String message, Throwable e) {
-		super(message, e);
+		super(HttpStatus.FORBIDDEN, message, e);
 	}
+
+	public ForbiddenException(String message) {
+		super(HttpStatus.FORBIDDEN, message);
+	}
+
+	public ForbiddenException(Throwable e) {
+		super(HttpStatus.FORBIDDEN, e);
+	}
+	
 }

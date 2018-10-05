@@ -1,23 +1,21 @@
 package com.sigma.exception;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-public class InternalServerException extends RuntimeException {
+public class InternalServerException extends DefaultException {
 
 	private static final long serialVersionUID = 1L;
 
-	public InternalServerException() {
-		super("Internal Server exception");
-	}
-	
-	public InternalServerException(String message) {
-		super(message);
-	}
-	
 	public InternalServerException(String message, Throwable e) {
-		super(message, e);
+		super(HttpStatus.INTERNAL_SERVER_ERROR, message, e);
+	}
+
+	public InternalServerException(String message) {
+		super(HttpStatus.INTERNAL_SERVER_ERROR, message);
+	}
+
+	public InternalServerException(Throwable e) {
+		super(HttpStatus.INTERNAL_SERVER_ERROR, e);
 	}
 	
 }
